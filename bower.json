@@ -10,7 +10,9 @@
         "jsutils-server": "latest",
         "webmodules-jquery": "latest",
         "jsutils-file": "latest",
-        "jsutils-tmpl": "latest"
+        "jsutils-tmpl": "latest",
+        "datatables": "^1.10.11",
+        "datatables.net-rowreorder": "latest",
 	},
 	"license": "MIT",
 	"ignore": ["**/.*", "node_modules", "bower_components"]
