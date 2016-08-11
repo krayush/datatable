@@ -16,7 +16,6 @@ define({
         _init_: function(config) {
             var self = this;
             self.rowsSelected = [];
-            console.error(self.$$);
             var tableConfig = {
                 data: [],
                 columns: [],
@@ -48,11 +47,10 @@ define({
             return jsfile.get(config.configSrc).then(function(resp) {
                 self.$$.append('<table id="gridContainer"></table>');
                 self.gridContainer = self.$$.find("#datatableContainer");
-                self.jqfile = jq(resp.data);
+                self.jqfile = jq(resp);
                 self.generateTableConfig();
                 self.generateColumnsConfig();
                 self.generateActionsConfig();
-                
                 self.gridElement = self.$$.find("#gridContainer");
                 self.gridInstance = self.gridElement.DataTable(self.tableConfig);
                 
@@ -69,7 +67,6 @@ define({
                     self.$$.find(".dataTables_scroll").addClass("reorder-enabled");
                 }
                 self.configureGridActions();
-                console.error(self.tableConfig)
                 return {
                     config: self.tableConfig,
                     instance: self.gridInstance
