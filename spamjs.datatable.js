@@ -45,10 +45,8 @@ define({
                 actionsFormatter: self.actionsFormatter
             };
             self.tableConfig = jq.extend(tableConfig, config);
-            return self.$$.loadTemplate(
-                self.path("spamjs-datatable.html"), 
-                jsfile.get(config.configSrc)
-            ).then(function(resp) {
+            return jsfile.get(config.configSrc).then(function(resp) {
+                self.$$.append('<table id="gridContainer"></table>');
                 self.gridContainer = self.$$.find("#datatableContainer");
                 self.jqfile = jq(resp.data);
                 self.generateTableConfig();
