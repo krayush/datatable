@@ -283,6 +283,12 @@ define({
                 self.rowsSelected.splice(index, 1);
             }
         },
+        draw: function(){
+            return this.gridInstance.draw();
+        },
+        method: function(methodname,a,b,c,d,e){
+            return this.gridInstance[methodname](a,b,c,d,e);
+        },
         _remove_: function() {
             var self = this;
             jq(window).off("resize", self.resizeDatatable);
