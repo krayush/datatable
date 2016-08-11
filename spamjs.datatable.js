@@ -229,7 +229,9 @@ define({
                     recordsFiltered: resp.totalElements,
                     draw: data.draw
                 });
-                self.calculateSelectionChanged();
+                if(self.tableConfig.showCheckbox) {
+                    self.calculateSelectionChanged();
+                }
             }).always(function() {
                 self.$$.find("spinner").remove();
             });
