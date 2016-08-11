@@ -6,11 +6,11 @@
 	"description": "easy to integrate jquery-datatable",
 	"keywords": ["pitana", "jquery", "datatable"],
 	"dependencies": {
-		"spamjs/view": "latest",
-        "jsutils/server": "latest",
-        "webmodules/jquery": "latest",
-        "jsutils/file": "latest",
-        "jsutils/tmpl": "latest"
+		"spamjs-view": "latest",
+        "jsutils-server": "latest",
+        "webmodules-jquery": "latest",
+        "jsutils-file": "latest",
+        "jsutils-tmpl": "latest"
 	},
 	"license": "MIT",
 	"ignore": ["**/.*", "node_modules", "bower_components"]
