@@ -38,6 +38,7 @@ define({
                 correctPaginationData: function(paginateOptions) { return paginateOptions;},
                 initComplete: function() { 
                     self.resizeDatatable();
+                    self.$$.find("#gridContainer_wrapper").addClass("paginated-grid");
                     self.$$.find("#gridContainer_wrapper").animate({opacity: 1});
                 },
                 // need to trigger a event on row selection change
@@ -287,7 +288,7 @@ define({
             jq(window).off("resize", self.resizeDatatable);
         },
         resizeDatatable: window.debounce(function() {
-            var newHeight = this.$$.parent().height() - 40 - (this.tableConfig.paginate * 40);
+            var newHeight = this.$$.parent().height() - 40 - (this.tableConfig.paginate * 50);
             this.$$.find(".dataTables_scrollBody").height(newHeight);
         }, 100)
     };
