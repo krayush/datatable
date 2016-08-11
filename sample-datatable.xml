@@ -1,0 +1,65 @@
+<data-table>
+    <ajax id="ajax" 
+          data-url="getBagsList" 
+          data-server-side="true"
+          data-page-length="25">
+    </ajax>
+    <config id="config" 
+            data-sort="true" 
+            data-paginate="true" 
+            data-show-actions="true"
+            data-row-reorder="false"
+            data-show-checkbox="true">
+    </config>
+    <pagination id="pagination" paginate="true" data-page-length="10"></pagination>
+    <actions id="actions">
+        <action>Case Into</action>
+        <action disabled="true">Merge Into</action>
+        <action>Test Into</action>
+        
+    </actions>
+    <columns>
+        <col type="checkbox" class="dt-body-center">
+            <title><input type="checkbox" class="select-all" /></title>
+            <row><input type="checkbox" class="row-checkbox" /></row>
+        </col>
+        <col sort="true" title="BAG ID" presort="true" presort-direction="asc" width="33%">
+            <a jqr-go="" class='link' href='/olp/operations/bag-details?bagCode={{data.code}}'>{{data.code}}</a>
+            <copy/>
+        </col>
+        <col sort="true" title="BAG ID" presort="true" presort-direction="asc" width="33%">
+            <a jqr-go="" class='link' href='/olp/operations/bag-details?bagCode={{data.code}}'>{{data.code}}</a>
+            <copy/>
+        </col>
+        <col sort="true" title="BAG ID" presort="true" presort-direction="asc" width="33%">
+            <a jqr-go="" class='link' href='/olp/operations/bag-details?bagCode={{data.code}}'>{{data.code}}</a>
+            <copy/>
+        </col>
+        <col sort="true" title="BAG ID" presort="true" presort-direction="asc">
+            <a jqr-go="" class='link' href='/olp/operations/bag-details?bagCode={{data.code}}'>{{data.code}}</a>
+            <copy/>
+        </col>
+        <col sort="true" title="BAG ID" presort="true" presort-direction="asc">
+            <a jqr-go="" class='link' href='/olp/operations/bag-details?bagCode={{data.code}}'>{{data.code}}</a>
+            <copy/>
+        </col>
+        <col sort="true" title="BAG ID" presort="true" presort-direction="asc">
+            <a jqr-go="" class='link' href='/olp/operations/bag-details?bagCode={{data.code}}'>{{data.code}}</a>
+            <copy/>
+        </col>
+        <col sort="true" title="BAG ID" presort="true" presort-direction="asc">
+            <a jqr-go="" class='link' href='/olp/operations/bag-details?bagCode={{data.code}}'>{{data.code}}</a>
+            <copy/>
+        </col>
+        <col title="NO. OF PIECES">{{data.batchItems.length}}</col>
+        <col sort="true" title="BATCH STATUS" key="batchStatusCode">
+            {{$statusFormatter(data.batchStatusCode)}}
+        </col>
+        <col title="ORIGIN FACILITY CODE" sort="true">
+            {{data.a}}
+            <!-- if(data.segments && data.segments.length) { -->
+                {{data.segments[0].originNodeCode}}
+            <!-- } -->
+        </col>
+    </columns>
+</data-table>
