@@ -286,8 +286,8 @@ define({
         draw: function(){
             return this.gridInstance.draw();
         },
-        method: function(methodname,a,b,c,d,e){
-            return this.gridInstance[methodname](a,b,c,d,e);
+        method: function(methodname, a, b, c, d, e){
+            return this.gridInstance[methodname](a, b, c, d, e);
         },
         _remove_: function() {
             var self = this;
