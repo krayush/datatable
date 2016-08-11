@@ -1,0 +1,13 @@
+{
+	"name": "spamjs-datatable",
+	"main": "spamjs.datatable.js",
+	"authors": ["Ayush Walia <krjean@gmail.com>", 
+                "Lalit Tanwar <lalit.tanwar07@gmail.com>"],
+	"description": "easy to integrate jquery-datatable",
+	"keywords": ["pitana", "jquery", "datatable"],
+	"dependencies": {
+		"webmodules-jqtag": ">=0.0.6"
+	},
+	"license": "MIT",
+	"ignore": ["**/.*", "node_modules", "bower_components"]
+}
