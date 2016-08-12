@@ -20,6 +20,7 @@ define({
                 data: [],
                 columns: [],
                 columnDefs: [],
+                global: {},
                 scrollY: "200px",
                 dom: "Rfrtlip",
                 // for hiding "Available Actions" in the grid actions
@@ -38,14 +39,16 @@ define({
                 correctPaginationData: function(paginateOptions) { return paginateOptions;},
                 initComplete: function() { 
                     self.resizeDatatable();
-                    self.$$.find("#gridContainer_wrapper").addClass("paginated-grid");
+                    if(self.tableConfig.paginate) {
+                        self.$$.find("#gridContainer_wrapper").addClass("paginated-grid");
+                    }
                     self.$$.find("#gridContainer_wrapper").animate({opacity: 1});
                 },
                 // need to trigger a event on row selection change
                 actionsFormatter: self.actionsFormatter
             };
             self.tableConfig = jq.extend(tableConfig, config);
-            return jsfile.get(config.configSrc).then(function(resp) {
+            return jsfile.getXML(config.configSrc).then(function(resp) {
                 self.$$.append('<table id="gridContainer"></table>');
                 self.gridContainer = self.$$.find("#datatableContainer");
                 self.jqfile = jq(resp);
@@ -53,25 +56,36 @@ define({
                 self.generateColumnsConfig();
                 self.generateActionsConfig();
                 self.gridElement = self.$$.find("#gridContainer");
-                self.gridInstance = self.gridElement.DataTable(self.tableConfig);
-                
-                self.bindExternalSearch();
-                self.bindRowReorder();
-                // configuring rendering of grid on resizing
-                jq(window).resize(function() {
-                    self.resizeDatatable();
+                // configuring the part for handling non-server side datatable
+                if (!self.tableConfig.serverSide) {
+                    var paginateOptions = self.tableConfig.correctPaginationData({});
+                    self.$$.append("<spinner mid-spinner></spinner>");
+                    self.$gridData = self.getServer().get(
+                        self.tableConfig.url,
+                        paginateOptions,
+                        self.tableConfig.pathParams
+                    ).done(function(resp) {
+                        self.tableConfig.data = resp;
+                    });
+                }
+                jq.when(self.$gridData).done(function() {
+                    self.gridInstance = self.gridElement.DataTable(self.tableConfig);
+                    self.bindExternalSearch();
+                    self.bindRowReorder();
+                    // configuring rendering of grid on resizing
+                    jq(window).resize(function() {
+                        self.resizeDatatable();
+                    });
+                    if (self.tableConfig.showCheckbox) {
+                        self.$$.find(".dataTables_scroll").addClass("checkbox-enabled");
+                    }
+                    if (self.tableConfig.rowReorder) {
+                        self.$$.find(".dataTables_scroll").addClass("reorder-enabled");
+                    }
+                    self.configureGridActions();
+                }).always(function() {
+                    self.$$.find("spinner").remove();
                 });
-                if (self.tableConfig.showCheckbox) {
-                    self.$$.find(".dataTables_scroll").addClass("checkbox-enabled");
-                }
-                if (self.tableConfig.rowReorder) {
-                    self.$$.find(".dataTables_scroll").addClass("reorder-enabled");
-                }
-                self.configureGridActions();
-                return {
-                    config: self.tableConfig,
-                    instance: self.gridInstance
-                };
             });
         },
         configureGridActions: function() {
