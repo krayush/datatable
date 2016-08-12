@@ -56,19 +56,7 @@ define({
                 self.generateColumnsConfig();
                 self.generateActionsConfig();
                 self.gridElement = self.$$.find("#gridContainer");
-                // configuring the part for handling non-server side datatable
-                if (!self.tableConfig.serverSide) {
-                    var paginateOptions = self.tableConfig.correctPaginationData({});
-                    self.$$.append("<spinner mid-spinner></spinner>");
-                    self.$gridData = self.getServer().get(
-                        self.tableConfig.url,
-                        paginateOptions,
-                        self.tableConfig.pathParams
-                    ).done(function(resp) {
-                        self.tableConfig.data = resp;
-                    });
-                }
-                jq.when(self.$gridData).done(function() {
+                jq.when(self.getGridData()).done(function() {
                     self.gridInstance = self.gridElement.DataTable(self.tableConfig);
                     self.bindExternalSearch();
                     self.bindRowReorder();
@@ -87,6 +75,21 @@ define({
                     self.$$.find("spinner").remove();
                 });
             });
+        },
+        // fetches data only in case of client side grid
+        getGridData: function() {
+            var self = this;
+            if (!self.tableConfig.serverSide) {
+                var paginateOptions = self.tableConfig.correctPaginationData({});
+                self.$$.append("<spinner mid-spinner></spinner>");
+                return self.getServer().get(
+                    self.tableConfig.url,
+                    paginateOptions,
+                    self.tableConfig.pathParams
+                ).done(function(resp) {
+                    self.tableConfig.data = resp;
+                });
+            }
         },
         configureGridActions: function() {
             var self = this;
@@ -297,8 +300,23 @@ define({
                 self.rowsSelected.splice(index, 1);
             }
         },
-        draw: function(){
-            return this.gridInstance.draw();
+        draw: function(data) {
+            var self = this;
+            if(data) {
+                self.gridInstance.clear();
+                self.gridInstance.rows.add(data);
+                self.gridInstance.draw();
+            } else if(self.tableConfig.serverSide) {
+                self.gridInstance.draw();
+            } else {
+                jq.when(self.getGridData()).done(function(resp) {
+                    self.gridInstance.clear();
+                    self.gridInstance.rows.add(resp);
+                    self.gridInstance.draw();
+                }).always(function() {
+                    self.$$.find("spinner").remove();
+                });
+            }
         },
         method: function(methodname, a, b, c, d, e){
             return this.gridInstance[methodname](a, b, c, d, e);
