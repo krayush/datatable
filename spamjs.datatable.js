@@ -303,6 +303,10 @@ define({
                 self.rowsSelected.splice(index, 1);
             }
         },
+        getData: function() {
+            // index: get specific row, empty: get all rows
+            return this.gridInstance.rows.apply(this.getGridInstance, arguments).data();
+        },
         draw: function(data) {
             var self = this;
             if(self.gridInstance) {
