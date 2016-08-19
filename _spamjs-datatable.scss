@@ -60,25 +60,26 @@
                 color: #7A7A7A;
             }
         }
-        tr td,
-        tr th {
-            border-bottom: 1px solid #ECECEC;
-            border-right: 1px solid #ECECEC;
-            font-size: 12px;
-            box-sizing: border-box;
-            &:last-child {
-                border-right: none;
-            }
-            &:first-child {
-                border-left: none;
+        tr {
+            td, th {
+                border-bottom: 1px solid #ECECEC;
+                border-right: 1px solid #ECECEC;
+                font-size: 12px;
+                box-sizing: border-box;
+                &:last-child {
+                    border-right: none;
+                }
+                &:first-child {
+                    border-left: none;
+                }
             }
             &.even {
                 background-color: #FEFEFE;
             }
-        }
-        tbody tr.selected {
-            background-color: #FFFEFB;
-        }
+            &.selected {
+                background-color: #FFFEFB;
+            }
+        } 
     }
     .dataTables_scrollHead {
         border-bottom: none !important;

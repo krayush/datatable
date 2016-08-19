@@ -71,11 +71,10 @@
 #gridContainer_wrapper table.dataTable tr th:first-child {
     border-left: none;
 }
-#gridContainer_wrapper table.dataTable tr td.even,
-#gridContainer_wrapper table.dataTable tr th.even {
+#gridContainer_wrapper table.dataTable tr.even {
     background-color: #FEFEFE;
 }
-#gridContainer_wrapper table.dataTable tbody tr.selected {
+#gridContainer_wrapper table.dataTable tr.selected {
     background-color: #FFFEFB;
 }
 #gridContainer_wrapper .dataTables_scrollHead {
