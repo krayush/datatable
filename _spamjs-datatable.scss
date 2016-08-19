@@ -75,6 +75,9 @@
             &:first-child {
                 border-left: none;
             }
+            &.even {
+                background-color: #FEFEFE;
+            }
         }
         tbody tr.selected {
             background-color: #FFFEFB;
