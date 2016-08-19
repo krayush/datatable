@@ -302,20 +302,22 @@ define({
         },
         draw: function(data) {
             var self = this;
-            if(data) {
-                self.gridInstance.clear();
-                self.gridInstance.rows.add(data);
-                self.gridInstance.draw();
-            } else if(self.tableConfig.serverSide) {
-                self.gridInstance.draw();
-            } else {
-                jq.when(self.getGridData()).done(function(resp) {
+            if(self.gridInstance) {
+                if(data) {
                     self.gridInstance.clear();
-                    self.gridInstance.rows.add(resp);
+                    self.gridInstance.rows.add(data);
                     self.gridInstance.draw();
-                }).always(function() {
-                    self.$$.find("spinner").remove();
-                });
+                } else if(self.tableConfig.serverSide) {
+                    self.gridInstance.draw();
+                } else {
+                    jq.when(self.getGridData()).done(function(resp) {
+                        self.gridInstance.clear();
+                        self.gridInstance.rows.add(resp);
+                        self.gridInstance.draw();
+                    }).always(function() {
+                        self.$$.find("spinner").remove();
+                    });
+                }
             }
         },
         method: function(methodname, a, b, c, d, e){
