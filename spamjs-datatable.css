@@ -32,9 +32,6 @@
     word-wrap: break-word;
     width: 195px;
 }
-#gridContainer_wrapper table#tableContainer tr.even {
-    background-color: #FEFEFE;
-}
 #gridContainer_wrapper .dataTables_scrollHead .dt-body-center {
     text-align: center;
     background-color: #F5F5F5;
@@ -118,13 +115,6 @@
 #gridContainer_wrapper .paginate_button.current {
     background: #f4f5f4;
     border-color: #d6d6d6;
-}
-#gridContainer_wrapper #tableContainer_paginate {
-    margin-top: 10px;
-    font-size: 12px;
-    line-height: 20px;
-    height: 36px;
-    padding-top: 0;
 }
 #gridContainer_wrapper .grid-actions {
     position: absolute;

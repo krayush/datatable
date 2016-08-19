@@ -34,9 +34,6 @@
             word-wrap: break-word;
             width: 195px;
         }
-        tr.even {
-            background-color: #FEFEFE;
-        }
     }
     .dataTables_scrollHead .dt-body-center {
         text-align: center;
@@ -120,13 +117,6 @@
             background: #f4f5f4;
             border-color: #d6d6d6;
         }
-    }
-    #tableContainer_paginate {
-        margin-top: 10px;
-        font-size: 12px;
-        line-height: 20px;
-        height: 36px;
-        padding-top: 0;
     }
     .grid-actions {
         position: absolute;
