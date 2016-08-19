@@ -79,6 +79,9 @@ define({
         // fetches data only in case of client side grid
         getGridData: function() {
             var self = this;
+            if (!self.tableConfig.url) {
+                return self.tableConfig.data;
+            }
             if (!self.tableConfig.serverSide) {
                 var paginateOptions = self.tableConfig.correctPaginationData({});
                 self.$$.append("<spinner mid-spinner></spinner>");
