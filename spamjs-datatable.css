@@ -18,10 +18,6 @@
 #gridContainer_wrapper body.dt-rowReorder-noOverflow {
     overflow-x: hidden;
 }
-#gridContainer_wrapper table.dataTable td.reorder {
-    text-align: center;
-    cursor: move;
-}
 #gridContainer_wrapper .dataTables_scroll.checkbox-enabled thead th:first-child {
     width: 55px !important;
     padding: 10px;
@@ -41,9 +37,14 @@
 #gridContainer_wrapper table.dataTable {
     table-layout: fixed;
     margin: 0;
+    min-width: 100%;
 }
 #gridContainer_wrapper table.dataTable .icon_vertical_dots {
     margin-top: 6px;
+}
+#gridContainer_wrapper table.dataTable td.reorder {
+    text-align: center;
+    cursor: move;
 }
 #gridContainer_wrapper table.dataTable div.dataTables_scroll {
     clear: both;
@@ -153,7 +154,7 @@
     padding-bottom: 50px;
 }
 #gridContainer_wrapper .dataTables_scrollHeadInner {
-    min-width: 100% !important;
+    width: 100% !important;
 }
 #gridContainer_wrapper .dataTable.no-footer {
     min-width: 100% !important;

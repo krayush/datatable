@@ -17,10 +17,6 @@
     body.dt-rowReorder-noOverflow {
         overflow-x: hidden
     }
-    table.dataTable td.reorder {
-        text-align: center;
-        cursor: move;
-    }
     .dataTables_scroll.checkbox-enabled {
         thead {
             th:first-child {
@@ -44,8 +40,13 @@
     table.dataTable {
         table-layout: fixed;
         margin: 0;
+        min-width: 100%;
         .icon_vertical_dots {
             margin-top: 6px;
+        }
+        td.reorder {
+            text-align: center;
+            cursor: move;
         }
         div.dataTables_scroll {
             clear: both;
@@ -159,7 +160,7 @@
         }
     }
     .dataTables_scrollHeadInner {
-        min-width: 100% !important;
+        width: 100% !important;
     }
     .dataTable.no-footer {
         min-width: 100% !important;
