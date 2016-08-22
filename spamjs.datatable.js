@@ -56,7 +56,7 @@ define({
                 self.generateColumnsConfig();
                 self.generateActionsConfig();
                 self.gridElement = self.$$.find("#gridContainer");
-                jq.when(self.getGridData()).done(function() {
+                return jq.when(self.getGridData()).done(function() {
                     self.gridInstance = self.gridElement.DataTable(self.tableConfig);
                     self.bindExternalSearch();
                     self.bindRowReorder();
