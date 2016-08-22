@@ -1,6 +1,7 @@
 #gridContainer_wrapper {
     opacity: 0;
     overflow: hidden;
+    min-width: 100%;
     table.dt-rowReorder-float {
         position: absolute !important;
         opacity: 0.8;
@@ -156,5 +157,11 @@
         .dataTables_scroll {
             padding-bottom: 50px;
         }
+    }
+    .dataTables_scrollHeadInner {
+        min-width: 100% !important;
+    }
+    .dataTable.no-footer {
+        min-width: 100% !important;
     }
 }
