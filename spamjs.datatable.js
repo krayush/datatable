@@ -57,6 +57,8 @@ define({
                 self.generateActionsConfig();
                 self.gridElement = self.$$.find("#gridContainer");
                 return jq.when(self.getGridData()).done(function() {
+                    // This way we will override everything in JS code
+                    self.tableConfig = jq.extend(tableConfig, config);
                     self.gridInstance = self.gridElement.DataTable(self.tableConfig);
                     self.bindExternalSearch();
                     self.bindRowReorder();
