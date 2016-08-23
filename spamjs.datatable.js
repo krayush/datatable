@@ -196,12 +196,13 @@ define({
                 self.tableConfig.columns.push(jq.extend({
                     type: "html",
                     title: '<input type="checkbox" class="select-all" />',
-                    className: "dt-head-center",
+                    className: "dt-head-center checkbox-col",
                     orderable: false,
-                    html: '<input type="checkbox" class="row-checkbox/>'
+                    html: '<input type="checkbox" class="row-checkbox"/>'
                 }, self.checkboxConfig));
-                self.tableConfig.columns[0].render = function(data, type, full, meta) {
-                    return tmplUtil.compile(self.tableConfig.columns[0].html, full);
+                // +self.tableConfig.rowReorder will give 1 in case of row-reordering enabled
+                self.tableConfig.columns[+self.tableConfig.rowReorder].render = function(data, type, full, meta) {
+                    return tmplUtil.compile(self.tableConfig.columns[+self.tableConfig.rowReorder].html, full);
                 };
             }
             for(var i = 0; i < columns.length; i++) {
@@ -221,7 +222,12 @@ define({
                     })(i)
                 });
                 if(columns[i].getAttribute("presort")) {
-                    self.tableConfig.order = [[i, columns[i].getAttribute("presort-direction") || "asc"]]
+                    self.tableConfig.order = [
+                        [
+                            i + (+self.tableConfig.showCheckbox) + (+self.tableConfig.rowReorder),
+                            columns[i].getAttribute("presort-direction") || "asc"
+                        ]
+                    ]
                 }
             }
         },
@@ -233,7 +239,6 @@ define({
             };
             if (data.order.length) {
                 // FYI: Current datatable supports either row reodering or checkbox
-                // var orderIndex = data.order[0].column + (+!!self.tableConfig.rowReorder);
                 var orderIndex = data.order[0].column;
                 paginateOptions.orderBy = self.tableConfig.columns[orderIndex].key;
                 paginateOptions.sortAscending = (data.order[0].dir === "asc");
@@ -335,8 +340,9 @@ define({
                 }
             }
         },
-        method: function(methodname, a, b, c, d, e){
-            return this.gridInstance[methodname](a, b, c, d, e);
+        method: function(){
+            // arguments[0] is function name to be called
+            return this.gridInstance[arguments[0]].apply(this, Array.prototype.slice.call(arguments, 1, arguments.length));
         },
         _remove_: function() {
             var self = this;
