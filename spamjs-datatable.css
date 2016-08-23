@@ -47,6 +47,9 @@
     text-align: center;
     cursor: move;
 }
+#gridContainer_wrapper table.dataTable td.dt-head-center {
+    text-align: center;
+}
 #gridContainer_wrapper table.dataTable div.dataTables_scroll {
     clear: both;
 }

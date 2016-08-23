@@ -124,7 +124,20 @@ define({
             var self = this;
             if (self.tableConfig.rowReorder) {
                 self.gridInstance.on('row-reorder', function(e, diff, edit) {
-                    self.trigger("row-reorder", diff);
+                    var reorderedData = [], originalData = self.getData();
+                    _.each(diff, function(row) {
+                        reorderedData[row.newPosition] = originalData[row.oldPosition];
+                    });
+                    _.each(originalData, function(row, index) {
+                        if (!reorderedData[index]) {
+                            reorderedData[index] = row;
+                        }
+                    });
+                    self.trigger("row-reorder", {
+                        original: originalData,
+                        reorderedData: reorderedData,
+                        edit: edit
+                    });
                 });
             }
         },
