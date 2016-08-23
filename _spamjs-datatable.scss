@@ -19,7 +19,7 @@
     }
     .dataTables_scroll.checkbox-enabled {
         thead {
-            th:first-child {
+            th.checkbox-col {
                 width: 55px !important;
                 padding: 10px;
             }

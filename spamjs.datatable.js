@@ -175,7 +175,7 @@ define({
                 if(jq(columns[0]).attr("type") === "checkbox") {
                     self.checkboxConfig = {
                         title: jq(columns[0]).find("title").html() || "&nbsp;",
-                        className: columns[0].getAttribute("class") || "dt-head-center",
+                        className: columns[0].getAttribute("class") || "dt-head-center checkbox-col",
                         html: jq(columns[0]).find("row").html()
                     };
                 }
