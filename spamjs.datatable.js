@@ -203,28 +203,30 @@ define({
                     }
                 });
             }
+            if(!self.tableConfig.showCheckbox) {
+                if(columns[0].getAttribute("type") === "checkbox") {
+                    columns = columns.slice(1, columns.length);
+                }
+            }
             // if dummy template for the checkbox column is available: (+!!(self.checkboxConfig)) will give 1
             for(var i = (+!!(self.checkboxConfig)); i < columns.length; i++) {
-                // only process the ones for which type is not defined
-                if(!columns[i].getAttribute("type")) {
-                    self.tableConfig.columns.push({
-                        type: "html",
-                        key: columns[i].getAttribute("key"),
-                        visible: !columns[i].getAttribute("hidden"),
-                        title: columns[i].getAttribute("title") || "&nbsp;",
-                        className: columns[i].getAttribute("class") || "dt-head-left",
-                        orderable: !!columns[i].getAttribute("sort"),
-                        width: columns[i].getAttribute("width") || self.tableConfig.defaultColumnWidth,
-                        render: (function(index) {
-                            var compile = tmplUtil.compile(columns[index].innerHTML);
-                            return function(data, type, full, meta) {
-                                return compile(jq.extend(full, self.tableConfig.global)).trim() || "-";
-                            }
-                        })(i)
-                    });
-                    if(columns[i].getAttribute("presort")) {
-                        self.tableConfig.order = [[i, columns[i].getAttribute("presort-direction") || "asc"]]
-                    }
+                self.tableConfig.columns.push({
+                    type: "html",
+                    key: columns[i].getAttribute("key"),
+                    visible: !columns[i].getAttribute("hidden"),
+                    title: columns[i].getAttribute("title") || "&nbsp;",
+                    className: columns[i].getAttribute("class") || "dt-head-left",
+                    orderable: !!columns[i].getAttribute("sort"),
+                    width: columns[i].getAttribute("width") || self.tableConfig.defaultColumnWidth,
+                    render: (function(index) {
+                        var compile = tmplUtil.compile(columns[index].innerHTML);
+                        return function(data, type, full, meta) {
+                            return compile(jq.extend(full, self.tableConfig.global)).trim() || "-";
+                        }
+                    })(i)
+                });
+                if(columns[i].getAttribute("presort")) {
+                    self.tableConfig.order = [[i, columns[i].getAttribute("presort-direction") || "asc"]]
                 }
             }
         },
