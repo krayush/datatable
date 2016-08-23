@@ -53,9 +53,11 @@
 #gridContainer_wrapper table.dataTable input[type=radio] {
     margin: 3px 0 0;
 }
+#gridContainer_wrapper table.dataTable thead th {
+    background-color: #F5F5F5;
+}
 #gridContainer_wrapper table.dataTable thead th.dt-head-left {
     padding-left: 10px;
-    background-color: #F5F5F5;
     font-weight: bold;
     color: #7A7A7A;
 }

@@ -56,9 +56,11 @@
             margin: 3px 0 0;
         }
         thead {
+            th {
+                background-color: #F5F5F5;
+            }
             th.dt-head-left {
                 padding-left: 10px;
-                background-color: #F5F5F5;
                 font-weight: bold;
                 color: #7A7A7A;
             }
