@@ -53,12 +53,12 @@ define({
                 self.gridContainer = self.$$.find("#datatableContainer");
                 self.jqfile = jq(resp);
                 self.generateTableConfig();
+                // This way we will override everything in JS code
+                self.tableConfig = jq.extend(self.tableConfig, config);
                 self.generateColumnsConfig();
                 self.generateActionsConfig();
                 self.gridElement = self.$$.find("#gridContainer");
                 return jq.when(self.getGridData()).done(function() {
-                    // This way we will override everything in JS code
-                    self.tableConfig = jq.extend(tableConfig, config);
                     self.gridInstance = self.gridElement.DataTable(self.tableConfig);
                     self.bindExternalSearch();
                     self.bindRowReorder();
@@ -205,23 +205,26 @@ define({
             }
             // if dummy template for the checkbox column is available: (+!!(self.checkboxConfig)) will give 1
             for(var i = (+!!(self.checkboxConfig)); i < columns.length; i++) {
-                self.tableConfig.columns.push({
-                    type: "html",
-                    key: columns[i].getAttribute("key"),
-                    visible: !columns[i].getAttribute("hidden"),
-                    title: columns[i].getAttribute("title") || "&nbsp;",
-                    className: columns[i].getAttribute("class") || "dt-head-left",
-                    orderable: !!columns[i].getAttribute("sort"),
-                    width: columns[i].getAttribute("width") || self.tableConfig.defaultColumnWidth,
-                    render: (function(index) {
-                        var compile = tmplUtil.compile(columns[index].innerHTML);
-                        return function(data, type, full, meta) {
-                            return compile(jq.extend(full, self.tableConfig.global)).trim() || "-";
-                        }
-                    })(i)
-                });
-                if(columns[i].getAttribute("presort")) {
-                    self.tableConfig.order = [[i, columns[i].getAttribute("presort-direction") || "asc"]]
+                // only process the ones for which type is not defined
+                if(!columns[i].getAttribute("type")) {
+                    self.tableConfig.columns.push({
+                        type: "html",
+                        key: columns[i].getAttribute("key"),
+                        visible: !columns[i].getAttribute("hidden"),
+                        title: columns[i].getAttribute("title") || "&nbsp;",
+                        className: columns[i].getAttribute("class") || "dt-head-left",
+                        orderable: !!columns[i].getAttribute("sort"),
+                        width: columns[i].getAttribute("width") || self.tableConfig.defaultColumnWidth,
+                        render: (function(index) {
+                            var compile = tmplUtil.compile(columns[index].innerHTML);
+                            return function(data, type, full, meta) {
+                                return compile(jq.extend(full, self.tableConfig.global)).trim() || "-";
+                            }
+                        })(i)
+                    });
+                    if(columns[i].getAttribute("presort")) {
+                        self.tableConfig.order = [[i, columns[i].getAttribute("presort-direction") || "asc"]]
+                    }
                 }
             }
         },
