@@ -19,10 +19,10 @@
         
     </actions>
     <columns>
-        <col type="checkbox" class="dt-body-center">
+        <checkbox-col class="dt-body-center">
             <title><input type="checkbox" class="select-all" /></title>
             <row><input type="checkbox" class="row-checkbox" /></row>
-        </col>
+        </checkbox-col>
         <col sort="true" title="BAG ID" presort="true" presort-direction="asc" width="33%">
             <a jqr-go="" class='link' href='/olp/operations/bag-details?bagCode={{data.code}}'>{{data.code}}</a>
             <copy/>

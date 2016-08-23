@@ -171,14 +171,26 @@ define({
         },
         generateColumnsConfig: function() {
             var self = this;
-            var columns = self.jqfile.find("columns").children();
+            var columns = self.jqfile.find("col");
+            var checkboxColumn = self.jqfile.find("checkbox-col");
+            if(self.tableConfig.rowReorder) {
+                self.tableConfig.columns.push({
+                    type: "html",
+                    title: '&nbsp;',
+                    className: "dt-head-center reorder-col",
+                    orderable: false,
+                    render: function(data, type, full, meta) {
+                        return '<span grab><i class="icon icon_vertical_dots"></i></span>';
+                    }
+                });
+            }
             if(self.tableConfig.showCheckbox) {
                 // if dummy template for the checkbox column is available
-                if(jq(columns[0]).attr("type") === "checkbox") {
+                if(checkboxColumn.length) {
                     self.checkboxConfig = {
-                        title: jq(columns[0]).find("title").html() || "&nbsp;",
-                        className: columns[0].getAttribute("class") || "dt-head-center checkbox-col",
-                        html: jq(columns[0]).find("row").html()
+                        title: jq(checkboxColumn).find("title").html() || "&nbsp;",
+                        className: jq(checkboxColumn).getAttribute("class") || "dt-head-center checkbox-col",
+                        html: jq(checkboxColumn).find("row").html()
                     };
                 }
                 self.tableConfig.columns.push(jq.extend({
@@ -187,29 +199,12 @@ define({
                     className: "dt-head-center",
                     orderable: false,
                     html: '<input type="checkbox" class="row-checkbox/>'
-                }, self.checkboxConfig));  
+                }, self.checkboxConfig));
                 self.tableConfig.columns[0].render = function(data, type, full, meta) {
                     return tmplUtil.compile(self.tableConfig.columns[0].html, full);
                 };
             }
-            if(self.tableConfig.rowReorder) {
-                self.tableConfig.columns.push({
-                    type: "html",
-                    title: '&nbsp;',
-                    className: "dt-head-center",
-                    orderable: false,
-                    render: function(data, type, full, meta) {
-                        return '<span grab><i class="icon icon_vertical_dots"></i></span>';
-                    }
-                });
-            }
-            if(!self.tableConfig.showCheckbox) {
-                if(columns[0].getAttribute("type") === "checkbox") {
-                    columns = columns.slice(1, columns.length);
-                }
-            }
-            // if dummy template for the checkbox column is available: (+!!(self.checkboxConfig)) will give 1
-            for(var i = (+!!(self.checkboxConfig)); i < columns.length; i++) {
+            for(var i = 0; i < columns.length; i++) {
                 self.tableConfig.columns.push({
                     type: "html",
                     key: columns[i].getAttribute("key"),
