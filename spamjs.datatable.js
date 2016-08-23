@@ -250,6 +250,8 @@ define({
                     recordsFiltered: resp.totalElements,
                     draw: data.draw
                 });
+                // recalculating widths for the columns on redrawing
+                self.gridInstance.columns.adjust();
                 if(self.tableConfig.showCheckbox) {
                     self.calculateSelectionChanged();
                 }
@@ -314,6 +316,8 @@ define({
                     self.gridInstance.clear();
                     self.gridInstance.rows.add(data);
                     self.gridInstance.draw();
+                    // recalculating widths for the columns on redrawing
+                    self.gridInstance.columns.adjust();
                 } else if(self.tableConfig.serverSide) {
                     self.gridInstance.draw();
                 } else {
@@ -322,7 +326,7 @@ define({
                         self.gridInstance.rows.add(resp);
                         self.gridInstance.draw();
                         // recalculating widths for the columns on redrawing
-                        self.gridInstance.columns.adjust().responsive.recalc();
+                        self.gridInstance.columns.adjust();
                     }).always(function() {
                         self.$$.find("spinner").remove();
                     });
