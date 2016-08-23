@@ -321,6 +321,8 @@ define({
                         self.gridInstance.clear();
                         self.gridInstance.rows.add(resp);
                         self.gridInstance.draw();
+                        // recalculating widths for the columns on redrawing
+                        self.gridInstance.columns.adjust().responsive.recalc();
                     }).always(function() {
                         self.$$.find("spinner").remove();
                     });
