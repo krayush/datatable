@@ -10,8 +10,13 @@ define({
             "change .grid-actions": "gridActionSelected",
             "click input[type='checkbox'].select-all": "selectAllRows"
         },
+        // override this in your project to provide custom server
         getServer: function() {
             return utilServer;
+        },
+        // override this in your project to get i18n for titles
+        i18n: function(data) {
+            return data;
         },
         _init_: function(config) {
             var self = this;
@@ -158,7 +163,9 @@ define({
         },
         generateActionsConfig: function() {
             var self = this;
-            var actions = self.jqfile.find("#actions").children();
+            // compiling the action nodes using the data from the config
+            var actionsNodes = tmplUtil.compile(self.jqfile.find("#actions").html(), self.tableConfig);
+            var actions = jq(actionsNodes).children();
             _.each(actions, function(element) {
                 self.tableConfig.actionsList.push({
                     disabled: element.getAttribute("disabled"),
@@ -201,7 +208,7 @@ define({
                 // if dummy template for the checkbox column is available
                 if(checkboxColumn.length) {
                     self.checkboxConfig = {
-                        title: jq(checkboxColumn).find("title").html() || "&nbsp;",
+                        title: self.i18n(jq(checkboxColumn).find("title").html()) || "&nbsp;",
                         className: jq(checkboxColumn).getAttribute("class") || "dt-head-center checkbox-col",
                         html: jq(checkboxColumn).find("row").html()
                     };
@@ -223,7 +230,7 @@ define({
                     type: "html",
                     key: columns[i].getAttribute("key"),
                     visible: !columns[i].getAttribute("hidden"),
-                    title: columns[i].getAttribute("title") || "&nbsp;",
+                    title: self.i18n(columns[i].getAttribute("title")) || "&nbsp;",
                     className: columns[i].getAttribute("class") || "dt-head-left",
                     orderable: !!columns[i].getAttribute("sort"),
                     width: columns[i].getAttribute("width") || self.tableConfig.defaultColumnWidth,
