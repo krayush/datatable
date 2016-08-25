@@ -232,7 +232,8 @@ define({
                 self.tableConfig.columns.push({
                     type: "html",
                     key: columns[i].getAttribute("key"),
-                    visible: !columns[i].getAttribute("hidden"),
+                    // as getAttribute returns a string and not a boolean
+                    visible: columns[i].hasAttribute("hidden") ? columns[i].getAttribute("hidden") === "false" : true,
                     title: self.i18n(columns[i].getAttribute("title")) || "&nbsp;",
                     className: columns[i].getAttribute("class") || "dt-head-left",
                     orderable: !!columns[i].getAttribute("sort"),
