@@ -164,14 +164,17 @@ define({
         generateActionsConfig: function() {
             var self = this;
             // compiling the action nodes using the data from the config
-            var actionsNodes = tmplUtil.compile(self.jqfile.find("#actions").html(), self.tableConfig);
-            var actions = jq(actionsNodes).children();
-            _.each(actions, function(element) {
-                self.tableConfig.actionsList.push({
-                    disabled: element.getAttribute("disabled"),
-                    key: element.innerHTML
+            var actionNodes = self.jqfile.find("#actions");
+            if(actionNodes.length) {
+                var actionNodesContent = tmplUtil.compile(actionNodes.html(), self.tableConfig);
+                var actions = jq(actionNodesContent).children();
+                _.each(actions, function(element) {
+                    self.tableConfig.actionsList.push({
+                        disabled: element.getAttribute("disabled"),
+                        key: element.innerHTML
+                    });
                 });
-            });
+            }
         },
         generateTableConfig: function() {
             var self = this;
