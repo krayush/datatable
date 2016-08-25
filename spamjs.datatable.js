@@ -166,7 +166,9 @@ define({
             // compiling the action nodes using the data from the config
             var actionNodes = self.jqfile.find("#actions");
             if(actionNodes.length) {
-                var actionNodesContent = tmplUtil.compile(actionNodes.html())(self.tableConfig);
+                var actionNodesContent = tmplUtil.compile(actionNodes.html())({
+                    glob: self.tableConfig
+                });
                 var actions = jq(actionNodesContent).children();
                 _.each(actions, function(element) {
                     self.tableConfig.actionsList.push({
@@ -231,7 +233,7 @@ define({
             for(var i = 0; i < columns.length; i++) {
                 // cloning the element to compile the header otherwise it overwrites the original element
                 var clone = jq(columns[i]).clone().html("");
-                var compiledElement = jq(tmplUtil.compile(clone[0].outerHTML)(self.tableConfig.global))[0];
+                var compiledElement = jq(tmplUtil.compile(clone[0].outerHTML)({glob: self.tableConfig.global}))[0];
                 self.tableConfig.columns.push({
                     type: "html",
                     key: columns[i].getAttribute("key"),
@@ -242,9 +244,9 @@ define({
                     orderable: !!columns[i].getAttribute("sort"),
                     width: columns[i].getAttribute("width") || self.tableConfig.defaultColumnWidth,
                     render: (function(index) {
-                        var compile = tmplUtil.compile(columns[index].innerHTML);
+                        var compile = tmplUtil.compile(columns[index].innerHTML,{ variable : ""});
                         return function(data, type, full, meta) {
-                            return compile(jq.extend(full, self.tableConfig.global)).trim() || "-";
+                            return compile({data: full, glob: self.tableConfig.global}).trim() || "-";
                         }
                     })(i)
                 });
