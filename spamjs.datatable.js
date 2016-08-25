@@ -166,7 +166,9 @@ define({
             // compiling the action nodes using the data from the config
             var actionNodes = self.jqfile.find("#actions");
             if(actionNodes.length) {
-                var actionNodesContent = tmplUtil.compile(actionNodes.html())({
+                var actionNodesContent = tmplUtil.compile(actionNodes.html(), {
+                    variable : ""
+                })({
                     glob: self.tableConfig
                 });
                 var actions = jq(actionNodesContent).children();
@@ -227,13 +229,22 @@ define({
                 }, self.checkboxConfig));
                 // +self.tableConfig.rowReorder will give 1 in case of row-reordering enabled
                 self.tableConfig.columns[+self.tableConfig.rowReorder].render = function(data, type, full, meta) {
-                    return tmplUtil.compile(self.tableConfig.columns[+self.tableConfig.rowReorder].html)(full);
+                    return tmplUtil.compile(self.tableConfig.columns[+self.tableConfig.rowReorder].html, {
+                        variable : ""
+                    })({
+                        data: full, 
+                        glob: self.tableConfig.global
+                    });
                 };
             }
             for(var i = 0; i < columns.length; i++) {
                 // cloning the element to compile the header otherwise it overwrites the original element
                 var clone = jq(columns[i]).clone().html("");
-                var compiledElement = jq(tmplUtil.compile(clone[0].outerHTML)({glob: self.tableConfig.global}))[0];
+                var compiledElement = jq(tmplUtil.compile(clone[0].outerHTML, {
+                    variable : ""
+                })({
+                    glob: self.tableConfig.global
+                }))[0];
                 self.tableConfig.columns.push({
                     type: "html",
                     key: columns[i].getAttribute("key"),
