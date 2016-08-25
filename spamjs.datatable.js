@@ -166,7 +166,7 @@ define({
             // compiling the action nodes using the data from the config
             var actionNodes = self.jqfile.find("#actions");
             if(actionNodes.length) {
-                var actionNodesContent = tmplUtil.compile(actionNodes.html(), self.tableConfig);
+                var actionNodesContent = tmplUtil.compile(actionNodes.html())(self.tableConfig);
                 var actions = jq(actionNodesContent).children();
                 _.each(actions, function(element) {
                     self.tableConfig.actionsList.push({
@@ -225,15 +225,18 @@ define({
                 }, self.checkboxConfig));
                 // +self.tableConfig.rowReorder will give 1 in case of row-reordering enabled
                 self.tableConfig.columns[+self.tableConfig.rowReorder].render = function(data, type, full, meta) {
-                    return tmplUtil.compile(self.tableConfig.columns[+self.tableConfig.rowReorder].html, full);
+                    return tmplUtil.compile(self.tableConfig.columns[+self.tableConfig.rowReorder].html)(full);
                 };
             }
             for(var i = 0; i < columns.length; i++) {
+                // cloning the element to compile the header otherwise it overwrites the original element
+                var clone = jq(columns[i]).clone().html("");
+                var compiledElement = jq(tmplUtil.compile(clone[0].outerHTML)(self.tableConfig.global))[0];
                 self.tableConfig.columns.push({
                     type: "html",
                     key: columns[i].getAttribute("key"),
                     // as getAttribute returns a string and not a boolean
-                    visible: columns[i].hasAttribute("hidden") ? columns[i].getAttribute("hidden") === "false" : true,
+                    visible: compiledElement.hasAttribute("hidden") ? compiledElement.getAttribute("hidden") === "false" : true,
                     title: self.i18n(columns[i].getAttribute("title")) || "&nbsp;",
                     className: columns[i].getAttribute("class") || "dt-head-left",
                     orderable: !!columns[i].getAttribute("sort"),
