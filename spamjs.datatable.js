@@ -169,7 +169,7 @@ define({
                 var actionNodesContent = tmplUtil.compile(actionNodes.html(), {
                     variable : ""
                 })({
-                    glob: self.tableConfig
+                    glob: self.tableConfig.global
                 });
                 var actions = jq(actionNodesContent).children();
                 _.each(actions, function(element) {
