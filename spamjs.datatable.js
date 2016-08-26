@@ -166,7 +166,7 @@ define({
             // compiling the action nodes using the data from the config
             var actionNodes = self.jqfile.find("#actions");
             if(actionNodes.length) {
-                var actionNodesContent = tmplUtil.compile(actionNodes.html(), {
+                var actionNodesContent = tmplUtil.compile(actionNodes[0].outerHTML, {
                     variable : ""
                 })({
                     glob: self.tableConfig.global
