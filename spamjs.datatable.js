@@ -6,7 +6,7 @@ define({
     return {
         events: {
             "click .datatable-row": "datatableRowClick",
-            "change input[type='checkbox']": "rowSelectionChanged",
+            "change .datatable-row input[type='checkbox']": "rowSelectionChanged",
             "change .grid-actions": "gridActionSelected",
             "click input[type='checkbox'].select-all": "selectAllRows"
         },
