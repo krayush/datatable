@@ -38,6 +38,9 @@ define({
                 // showCheckbox && rowReorder are not supported together
                 showCheckbox: false,
                 rowReorder: false,
+                dataFormatter: function(data) {
+                    return data;
+                },
                 createdRow: function (row, data, index) {
                     jq(row).addClass("datatable-row");
                 },
@@ -291,6 +294,8 @@ define({
                 paginateOptions, 
                 self.tableConfig.pathParams
             ).done(function(resp) {
+                // formatting data before passing it to grid - only use if required
+                resp = self.tableConfig.dataFormatter(resp);
                 callback({
                     data: resp.content,
                     recordsTotal: resp.totalElements,
