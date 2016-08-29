@@ -44,6 +44,10 @@ define({
                 createdRow: function (row, data, index) {
                     jq(row).addClass("datatable-row");
                 },
+                // required as self.gridInstance.draw() does not return a promise
+                drawCallback: function() {
+                    self.trigger("grid-draw-completed");
+                },
                 correctPaginationData: function(paginateOptions) { return paginateOptions;},
                 initComplete: function() { 
                     self.resizeDatatable();
@@ -51,6 +55,7 @@ define({
                         self.$$.find("#gridContainer_wrapper").addClass("paginated-grid");
                     }
                     self.$$.find("#gridContainer_wrapper").animate({opacity: 1});
+                    self.trigger("grid-init-complete");
                 },
                 // need to trigger a event on row selection change
                 actionsFormatter: self.actionsFormatter
