@@ -160,6 +160,7 @@ define({
                 option: jq(element).val(),
                 rows: self.rowsSelected
             });
+            jq(element).val("");
         },
         actionsFormatter: function(rows) {
             var self = this;
