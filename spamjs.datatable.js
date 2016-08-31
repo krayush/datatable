@@ -235,7 +235,7 @@ define({
                 if(checkboxColumn.length) {
                     self.checkboxConfig = {
                         title: self.i18n(jq(checkboxColumn).find("title").html()) || "&nbsp;",
-                        className: jq(checkboxColumn).getAttribute("class") || "dt-head-center checkbox-col",
+                        className: jq(checkboxColumn).attr("class") || "dt-head-center checkbox-col",
                         html: jq(checkboxColumn).find("row").html()
                     };
                 }
