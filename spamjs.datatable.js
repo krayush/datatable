@@ -50,7 +50,9 @@ define({
                 },
                 correctPaginationData: function(paginateOptions) { return paginateOptions;},
                 initComplete: function() { 
-                    self.resizeDatatable = self.getResize();
+                    if(!self.resizeDatatable) {
+                        self.resizeDatatable = self.getResize();
+                    }
                     self.resizeDatatable();
                     if(self.tableConfig.paginate) {
                         self.$$.find("#gridContainer_wrapper").addClass("paginated-grid");
@@ -200,6 +202,9 @@ define({
             // configure ajax
             if (self.tableConfig.serverSide) {
                 self.tableConfig.ajax = function(data, callback, settings) {
+                    if(!self.resizeDatatable) {
+                        self.resizeDatatable = self.getResize();
+                    }
                     self.resizeDatatable();
                     self.rowsSelected = [];
                     return self.configurePagination.apply(self, arguments);
