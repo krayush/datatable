@@ -28,8 +28,8 @@ define({
                 global: {},
                 scrollY: "200px",
                 dom: "Rfrtlip",
-                // for hiding "Available Actions" in the grid actions
-                showActionTitle: true,
+                // for showing custom text instead of "Available Actions" in the grid actions
+                actionTitle: true,
                 info: false,
                 pathParams: {},
                 scrollX: true,
@@ -117,9 +117,9 @@ define({
             var actionsList = self.tableConfig.actionsList;
             self.$$.find(".dataTables_scrollHead").append('<select class="grid-actions"></select>');
             if (actionsList.length) {
-                if(self.tableConfig.showActionTitle) {
-                    self.$$.find(".grid-actions").append('<option selected="selected" disabled="disabled" value="">Available Actions</option>');
-                }
+                //if(self.tableConfig.actionTitle) {
+                    self.$$.find(".grid-actions").append('<option selected="selected" disabled="disabled" value="">'+self.tableConfig.actionTitle+'</option>');
+                //}
                 _.each(actionsList, function(item) {
                     self.$$.find(".grid-actions").append(
                         '<option '+ (item.disabled ? 'disabled': '') +' value="' + item.key + '">' + item.key + '</option>'
