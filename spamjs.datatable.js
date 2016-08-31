@@ -29,7 +29,7 @@ define({
                 scrollY: "200px",
                 dom: "Rfrtlip",
                 // for showing custom text instead of "Available Actions" in the grid actions
-                actionTitle: true,
+                actionTitle: "Available Actions",
                 info: false,
                 pathParams: {},
                 scrollX: true,
