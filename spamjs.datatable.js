@@ -50,6 +50,7 @@ define({
                 },
                 correctPaginationData: function(paginateOptions) { return paginateOptions;},
                 initComplete: function() { 
+                    self.resizeDatatable = self.getResize();
                     self.resizeDatatable();
                     if(self.tableConfig.paginate) {
                         self.$$.find("#gridContainer_wrapper").addClass("paginated-grid");
@@ -399,9 +400,12 @@ define({
             var self = this;
             jq(window).off("resize", self.resizeDatatable);
         },
-        resizeDatatable: window.debounce(function() {
-            var newHeight = this.$$.parent().height() - 40 - (this.tableConfig.paginate * 50);
-            this.$$.find(".dataTables_scrollBody").height(newHeight);
-        }, 100)
+        getResize: function() {
+            var self = this;
+            return window.debounce(function() {
+                var newHeight = self.$$.parent().height() - 40 - (self.tableConfig.paginate * 50);
+                self.$$.find(".dataTables_scrollBody").height(newHeight);
+            }, 200, null, self.$$.parent().attr("id"));
+        }
     };
 });
