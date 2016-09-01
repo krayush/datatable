@@ -6,8 +6,8 @@ define({
     return {
         events: {
             "click .datatable-row": "datatableRowClick",
-            "change .datatable-row input[type='checkbox']": "rowSelectionChanged",
             "change .grid-actions": "gridActionSelected",
+            "change .datatable-row input[type='checkbox']": "rowSelectionChanged",
             "click input[type='checkbox'].select-all": "selectAllRows"
         },
         // override this in your project to provide custom server
@@ -312,6 +312,8 @@ define({
             ).done(function(resp) {
                 // formatting data before passing it to grid - only use if required
                 resp = self.tableConfig.dataFormatter(resp);
+                // clearing previous selection
+                self.rowsSelected = [];
                 callback({
                     data: resp.content,
                     recordsTotal: resp.totalElements,
@@ -339,6 +341,7 @@ define({
         rowSelectionChanged: function(e, element) {
             this.calculateSelectionChanged();
             this.setSelectRowsData(element);
+            this.trigger("row-selection-changed", this.rowsSelected);
         },
         calculateSelectionChanged: function() {
             var self = this;
@@ -355,22 +358,29 @@ define({
         },
         selectAllRows: function(e, element) {
             var self = this;
-            if (element.checked) {
-                self.gridElement.find('.row-checkbox:not(:checked)').trigger('click');
-            } else {
-                self.gridElement.find('.row-checkbox:checked').trigger('click');
-            }
+            var availableRows = self.gridElement.find(".row-checkbox:not(:disabled)");
+            availableRows.prop("checked", element.checked);
+            // clearing previous selection
+            self.rowsSelected = [];
+            availableRows.map(function(index, element) {
+                self.setSelectRowsData(element);
+            });
+            self.trigger("row-selection-changed", self.rowsSelected);
+            self.calculateSelectionChanged();
             e.stopPropagation();
         },
+        // atleast one field inside the grid should be unique
         setSelectRowsData: function(element) {
-            var self = this;
             var row = jq(element).closest('tr');
-            var data = self.gridInstance.row(row).data();
-            var index = jq.inArray(data, self.rowsSelected);
+            var data = this.gridInstance.row(row).data();
+            var index = jq.inArray(data, this.rowsSelected);
             if (element.checked) {
-                self.rowsSelected.push(data);
+                // don't add element if it already exists in the array - this scenerio might not occur in normal flow
+                if(index === -1) {
+                    this.rowsSelected.push(data);
+                }
             } else {
-                self.rowsSelected.splice(index, 1);
+                this.rowsSelected.splice(index, 1);
             }
         },
         getData: function() {
