@@ -71,6 +71,7 @@ define({
                 self.generateTableConfig();
                 // This way we will override everything in JS code
                 self.tableConfig = jq.extend(self.tableConfig, config);
+                self.configureAjax();
                 self.generateColumnsConfig();
                 self.generateActionsConfig();
                 self.gridElement = self.$$.find("#gridContainer");
@@ -203,6 +204,9 @@ define({
             self.tableConfig = jq.extend(self.tableConfig, self.jqfile.find("#ajax").data());
             // pagination: 50 & header: 40
             self.tableConfig.scrollY = this.$$.parent().height() - 40 - (this.tableConfig.paginate * 50);
+        },
+        configureAjax: function() {
+            var self = this;
             // configure ajax
             if (self.tableConfig.serverSide) {
                 self.tableConfig.ajax = function(data, callback, settings) {
