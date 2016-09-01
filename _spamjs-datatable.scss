@@ -17,7 +17,7 @@
     body.dt-rowReorder-noOverflow {
         overflow-x: hidden
     }
-    .dataTables_scroll.checkbox-enabled {
+    .dataTables_scroll.checkbox-enabled, .dataTables_scroll.reorder-enabled {
         thead {
             th.checkbox-col, th.reorder-col {
                 width: 55px !important;
