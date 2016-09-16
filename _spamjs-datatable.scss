@@ -10,6 +10,33 @@
         outline-offset: -2px;
         z-index: 2001
     }
+    table.dataTable thead th {
+        background: none;
+    }
+    .title-text {
+        width: calc(100% - 20px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        .fa-arrow-down, .fa-arrow-up {
+            margin-left: 10px;
+        }
+    }
+    .sorting_disabled, .sorting {
+        .fa-arrow-down, .fa-arrow-up {
+            display: none;
+        }
+    }
+    .sorting_asc {
+        .fa-arrow-down {
+            display: none;
+        }
+    }
+    .sorting_desc {
+        .fa-arrow-up {
+            display: none;
+        }
+    }
     tr.dt-rowReorder-moving {
         outline: 2px solid #EEE;
         outline-offset: -2px

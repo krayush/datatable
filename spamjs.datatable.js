@@ -268,12 +268,16 @@ define({
                 })({
                     glob: self.tableConfig.global
                 }))[0];
+                var customDiv = jq("<div class='title-text'>");
+                customDiv.html(self.i18n(columns[i].getAttribute("title")) || "&nbsp;");
+                customDiv.append('<i class="fa fa-arrow-down"></i>');
+                customDiv.append('<i class="fa fa-arrow-up"></i>');
                 self.tableConfig.columns.push({
                     type: "html",
                     key: columns[i].getAttribute("key"),
                     // as getAttribute returns a string and not a boolean
                     visible: compiledElement.hasAttribute("hidden") ? compiledElement.getAttribute("hidden") === "false" : true,
-                    title: self.i18n(columns[i].getAttribute("title")) || "&nbsp;",
+                    title: customDiv[0].outerHTML,
                     className: columns[i].getAttribute("class") || "dt-head-left",
                     orderable: !!columns[i].getAttribute("sort"),
                     width: columns[i].getAttribute("width") || self.tableConfig.defaultColumnWidth,
@@ -395,7 +399,6 @@ define({
             var self = this;
             self.rowsSelected = [];
             self.$$.find('input[type="checkbox"].select-all').attr("checked", false);
-            self.$$.find('input[type="checkbox"].select-all').prop("indeterminate", false);
             self.$$.find(".grid-actions").hide();
             if(self.gridInstance) {
                 if(data) {
