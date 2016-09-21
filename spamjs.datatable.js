@@ -399,6 +399,7 @@ define({
             var self = this;
             self.rowsSelected = [];
             self.$$.find('input[type="checkbox"].select-all').attr("checked", false);
+            self.$$.find('input[type="checkbox"].select-all')[0].indeterminate = false;
             self.$$.find(".grid-actions").hide();
             if(self.gridInstance) {
                 if(data) {
