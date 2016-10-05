@@ -8,7 +8,8 @@ define({
             "click .datatable-row": "datatableRowClick",
             "change .grid-actions": "gridActionSelected",
             "change .datatable-row input[type='checkbox']": "rowSelectionChanged",
-            "click input[type='checkbox'].select-all": "selectAllRows"
+            "click input[type='checkbox'].select-all": "selectAllRows",
+            "grid-init-complete": "bindFilterEvent"
         },
         // override this in your project to provide custom server
         getServer: function() {
@@ -18,12 +19,171 @@ define({
         i18n: function(data) {
             return data;
         },
+        bindFilterEvent: function() {
+            var self = this;
+            self.$$.find(".filter-container").click(function(e) {
+                if(jq(e.target).hasClass("filter-icon")) {
+                    self.generateFilterModal(e);
+                }
+                // handling bubble event for apply filter manually
+                if(!jq(e.target).hasClass("apply-filter")) {
+                    e.stopPropagation();
+                }
+            });
+            self.$$.find(".filter-container").on("click", '.apply-filter', function(e) {
+                self.applyFilter(e);
+            });
+        },
+        applyFilter: function(e) {
+            var self = this;
+            var parent = jq(e.target).parent(".filter-section");
+            var filterType = jq(e.target).attr("filter-type");
+            var filterId = jq(e.target).attr("filter-id");
+            _.each(self.appliedFilters, function(item, index) {
+                if(item && (item.name === filterId)) {
+                    self.appliedFilters.splice(index, 1);
+                }
+            });
+            switch(filterType) {
+                case "multiselect":
+                    var select = parent.find("select");
+                    if(select.val()) {
+                        self.appliedFilters.push({
+                            name: filterId,
+                            value: select.val()
+                        });
+                    }
+                    break;
+                case "checkbox":
+                    var checkboxes = parent.find("input[type='checkbox']");
+                    var value = [];
+                    _.each(checkboxes, function(item) {
+                        if(item.checked) {
+                            value.push(item.value);
+                        }
+                    });
+                    if(value.length) {
+                        self.appliedFilters.push({
+                            name: filterId,
+                            value: value
+                        });
+                    }
+                    break;
+                default:
+                    var element = parent.find("input[type='text']");
+                    if(element.val()) {
+                        self.appliedFilters.push({
+                            name: filterId,
+                            value: element.val()
+                        });
+                    }
+                    break;
+            }
+            self.draw();
+            e.stopPropagation();
+        },
+        // Showing the applied filter types in DOM
+        showAppliedFilterValues: function(filterId, filterType) {
+            var self = this;
+            var parent = self.$$.find(".filter-section");
+            var currentFilteredValue;
+            _.each(self.appliedFilters, function(item, index) {
+                if(item && (item.name === filterId)) {
+                    currentFilteredValue = item.value;
+                }
+            });
+            if(currentFilteredValue) {
+                switch(filterType) {
+                    case "multiselect":
+                        parent.find("select").val(currentFilteredValue);
+                        break;
+                    case "checkbox":
+                        var checkboxes = parent.find("input[type='checkbox']");
+                        _.each(checkboxes, function(item) {
+                            if(currentFilteredValue.indexOf(item.value) > -1) {
+                                item.checked = true;
+                            }
+                        });
+                        break;
+                    default:
+                        parent.find("input[type='text']").val(currentFilteredValue);
+                        break;
+                }
+            }
+        },
+        closeFilterSection: function() {
+            var self = this;
+            if(this.$popover) {
+                this.$popover.popover("destroy");
+                this.$$.find(".filter-open").removeClass("filter-open");
+                this.$popover = null;
+            }
+        },
+        generateFilterModal: function(e) {
+            var self = this;
+            var filterId = e.currentTarget.getAttribute("filter-id");
+            // Close the previous popover in all the cases
+            self.closeFilterSection();
+            // If a new fitler icon is clicked
+            if(self.currentOpenFilter !== filterId) {
+                self.currentOpenFilter = filterId;
+                var element = jq("<span></span>");
+                jq(e.target).after(element);
+                var filterConfig = self.filterConfig[filterId];
+                if(filterId && filterConfig && !jq(e.currentTarget).hasClass("filter-open")) {
+                    jq(e.currentTarget).addClass("filter-open");
+                    self.$popover = element.popover({
+                        trigger: "hover",
+                        html: true,
+                        placement: "bottom",
+                        // rendering content depending on the type of filter
+                        content: function() {
+                            var filterContainer = jq("<div class='filter-section'>");
+                            filterContainer.append("<div class='filter-title'>"+filterConfig.title+"</div>");
+                            switch(filterConfig.type) {
+                                case "multiselect":
+                                    element = jq("<select multiple='multiple'></select");
+                                    _.each(filterConfig.data, function(data) {
+                                        element.append("<option value='" + data.value + "'>" + data.display + "</option>");
+                                    });
+                                    break;
+                                case "checkbox":
+                                    element = jq("<div class='checkbox-filter-section'></div>");
+                                    _.each(filterConfig.data, function(data, index) {
+                                        element.append(
+                                            "<div class='checkbox-filter-row'>\
+                                                <input type='checkbox' id='" + (filterId + index) + "' name='" + filterId + "' value='" + data.value + "' />\
+                                                <label for='" + (filterId + index) + "'>" + data.display + "</label>\
+                                            </div>"
+                                        );
+                                    });
+                                    break;
+                                default: 
+                                    element = jq("<input type='text'/>");
+                                    break;
+                            }
+                            filterContainer.append(element);
+                            filterContainer.append("<button class='apply-filter' \
+                                filter-type='" + filterConfig.type + "' \
+                                filter-id='" + filterId + "' >APPLY</button>");
+                            filterContainer.append(jq("<div class='clear'>"));
+                            return filterContainer[0].outerHTML;
+                        }
+                    }).popover('show');
+                    self.showAppliedFilterValues(filterId, filterConfig.type);
+                }
+            } else {
+                self.currentOpenFilter = null;
+            }
+        },
         _init_: function(config) {
             var self = this;
             self.rowsSelected = [];
+            self.appliedFilters = [];
             var tableConfig = {
                 data: [],
                 columns: [],
+                apiMethod: "get",
                 columnDefs: [],
                 global: {},
                 scrollY: "200px",
@@ -32,6 +192,7 @@ define({
                 showActionTitle: true,
                 info: false,
                 pathParams: {},
+                defaultFilters: [],
                 scrollX: true,
                 defaultColumnWidth: "160px",
                 actionsList: [],
@@ -40,6 +201,19 @@ define({
                 rowReorder: false,
                 dataFormatter: function(data) {
                     return data;
+                },
+                integrateFilters: function(url, paginateOptions, appliedFilters) {
+                    _.each(appliedFilters, function(item) {
+                        if(typeof item.value === "string") {
+                            paginateOptions[item.name] = item.value;
+                        } else {
+                            paginateOptions[item.name] = item.value.join(",");
+                        }
+                    });
+                    return {
+                        url: url,
+                        paginateOptions: paginateOptions
+                    };
                 },
                 createdRow: function (row, data, index) {
                     jq(row).addClass("datatable-row");
@@ -71,6 +245,8 @@ define({
                 self.generateTableConfig();
                 // This way we will override everything in JS code
                 self.tableConfig = jq.extend(self.tableConfig, config);
+                // Setting filters as 
+                self.appliedFilters = self.tableConfig.defaultFilters || [];
                 self.configureAjax();
                 self.generateColumnsConfig();
                 self.generateActionsConfig();
@@ -80,8 +256,11 @@ define({
                     self.bindExternalSearch();
                     self.bindRowReorder();
                     // configuring rendering of grid on resizing
-                    jq(window).resize(function() {
-                        self.resizeDatatable();
+                    jq(window).resize(self.getResizeTasks());
+                    // configuring closing of filters section on click anywhere
+                    jq("body").click(function() {
+                        self.closeFilterSection();
+                        self.currentOpenFilter = null;
                     });
                     if (self.tableConfig.showCheckbox) {
                         self.$$.find(".dataTables_scroll").addClass("checkbox-enabled");
@@ -95,6 +274,19 @@ define({
                 });
             });
         },
+        // Tasks to be performed when window resize happens
+        getResizeTasks: function() {
+            var self = this;
+            if(self.resizeTasks) {
+                jq(window).off("resize", self.resizeTasks);
+            }
+            self.resizeTasks = function() {
+                self.resizeDatatable();
+                self.closeFilterSection();
+                self.currentOpenFilter = null;
+            };
+            return self.resizeTasks;
+        },
         // fetches data only in case of client side grid
         getGridData: function() {
             var self = this;
@@ -104,7 +296,7 @@ define({
             if (!self.tableConfig.serverSide) {
                 var paginateOptions = self.tableConfig.correctPaginationData({});
                 self.$$.append("<spinner mid-spinner></spinner>");
-                return self.getServer().get(
+                return self.getServer()[self.tableConfig.apiMethod](
                     self.tableConfig.url,
                     paginateOptions,
                     self.tableConfig.pathParams
@@ -215,7 +407,42 @@ define({
                     }
                     self.resizeDatatable();
                     self.rowsSelected = [];
+                    if(self.$popover) {
+                        self.$popover.popover("destroy");
+                        self.$$.find(".filter-open").removeClass("filter-open");
+                        self.$popover = null;
+                        self.currentOpenFilter = null;
+                    }
                     return self.configurePagination.apply(self, arguments);
+                }
+            }
+        },
+        generateFiltersConfig: function(columns, index) {
+            var self = this;
+            var content = jq(columns[index]).find("content").html();
+            var filterElement = jq(columns[index]).find("filter");
+            var elementId = jq(columns[index]).attr("id");
+            if(filterElement.length) {
+                if(elementId) {
+                    var compiledElement = jq(tmplUtil.compile(filterElement[0].outerHTML, {
+                        variable : ""
+                    })({
+                        glob: self.tableConfig.global
+                    }))[0];
+                    var options = jq(compiledElement).find("option");
+                    self.filterConfig[elementId] = {
+                        type: filterElement.attr("filter-type"),
+                        title: jq(columns[index]).attr("title"),
+                        data: []
+                    };
+                    _.each(options, function(option) {
+                        self.filterConfig[elementId].data.push({
+                            value: option.innerHTML,
+                            display: option.getAttribute("value")
+                        });
+                    });
+                } else {
+                    console.error("Id required for the filter missing");
                 }
             }
         },
@@ -260,6 +487,7 @@ define({
                     });
                 };
             }
+            self.filterConfig = {};
             for(var i = 0; i < columns.length; i++) {
                 // cloning the element to compile the header otherwise it overwrites the original element
                 var clone = jq(columns[i]).clone().html("");
@@ -268,10 +496,19 @@ define({
                 })({
                     glob: self.tableConfig.global
                 }))[0];
-                var customDiv = jq("<div class='title-text'>");
-                customDiv.html(self.i18n(columns[i].getAttribute("title")) || "&nbsp;");
-                customDiv.append('<i class="fa fa-arrow-down"></i>');
-                customDiv.append('<i class="fa fa-arrow-up"></i>');
+                var customDiv = jq("<div class='title-container'>");
+                var customTitle = jq("<div class='title-text'>");
+                customTitle.html(self.i18n(columns[i].getAttribute("title")) || "&nbsp;");
+                customTitle.append('<i class="fa fa-arrow-down"></i>');
+                customTitle.append('<i class="fa fa-arrow-up"></i>');
+                customDiv.append(customTitle[0].outerHTML);
+                var applyFilters = columns[i].getAttribute("apply-filter") === "true";
+                // Filters are only applicable in case of serverside grids
+                if(applyFilters && self.tableConfig.serverSide) {
+                    customDiv.append('<div class="filter-container"><i class="fa fa-filter filter-icon" aria-hidden="true">&nbsp;</i></div>');
+                    customDiv.find(".filter-container").attr("filter-id", columns[i].getAttribute("id"));
+                }
+                var content = jq(columns[i]).find("content").html();
                 self.tableConfig.columns.push({
                     type: "html",
                     key: columns[i].getAttribute("key"),
@@ -279,15 +516,16 @@ define({
                     visible: compiledElement.hasAttribute("hidden") ? compiledElement.getAttribute("hidden") === "false" : true,
                     title: customDiv[0].outerHTML,
                     className: columns[i].getAttribute("class") || "dt-head-left",
-                    orderable: !!columns[i].getAttribute("sort"),
+                    orderable: columns[i].getAttribute("sort") === "true",
                     width: columns[i].getAttribute("width") || self.tableConfig.defaultColumnWidth,
                     render: (function(index) {
-                        var compile = tmplUtil.compile(columns[index].innerHTML,{ variable : ""});
+                        var compile = tmplUtil.compile(content,{ variable : ""});
                         return function(data, type, full, meta) {
                             return compile({data: full, glob: self.tableConfig.global}).trim() || "-";
                         }
                     })(i)
                 });
+                self.generateFiltersConfig(columns, i);
                 if(columns[i].getAttribute("presort")) {
                     self.tableConfig.order = [
                         [
@@ -297,6 +535,7 @@ define({
                     ]
                 }
             }
+            console.error(self.filterConfig);
         },
         configurePagination: function(data, callback) {
             var self = this;
@@ -313,9 +552,15 @@ define({
             // editing params required before datatable fetches data
             paginateOptions = self.tableConfig.correctPaginationData(paginateOptions);
             self.$$.append("<spinner mid-spinner></spinner>");
-            self.getServer().get(
+            // config here is an object which will contain url and paginateOptions
+            var config = self.tableConfig.integrateFilters(
                 self.tableConfig.url, 
                 paginateOptions, 
+                self.appliedFilters
+            );
+            self.getServer()[self.tableConfig.apiMethod](
+                config.url, 
+                config.paginateOptions, 
                 self.tableConfig.pathParams
             ).done(function(resp) {
                 // formatting data before passing it to grid - only use if required
@@ -431,7 +676,8 @@ define({
         },
         _remove_: function() {
             var self = this;
-            jq(window).off("resize", self.resizeDatatable);
+            jq(window).off("resize", self.resizeTasks);
+            jq("body").off("click", self.closeFilterSection);
         },
         getResize: function() {
             var self = this;

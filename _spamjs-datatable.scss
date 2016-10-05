@@ -2,6 +2,15 @@
     opacity: 0;
     overflow: hidden;
     min-width: 100%;
+    .apply-filter {
+        float: right;
+        margin-top: 10px;
+    }
+    .checkbox-filter-row {
+        label {
+            font-weight: normal;
+        }
+    }
     table.dt-rowReorder-float {
         position: absolute !important;
         opacity: 0.8;
@@ -12,6 +21,30 @@
     }
     table.dataTable thead th {
         background: none;
+        padding: 10px;
+        .title-text {
+            float: left;
+        }
+        .filter-container {
+            color: #AAAAAA;
+            margin-left: 7px;
+            float: right;
+            width: 10px;
+            cursor: pointer;
+            position: relative;
+            .popover {
+                font-size: inherit;
+            }
+            > span {
+                position: absolute;
+                left: 50%;
+                margin-left: -1px;
+                background-color: black;
+            }
+            &:hover {
+                color: #777777;
+            }
+        }
     }
     .title-text {
         width: calc(100% - 20px);

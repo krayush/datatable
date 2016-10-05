@@ -23,6 +23,42 @@
             <title><input type="checkbox" class="select-all" /></title>
             <row><input type="checkbox" class="row-checkbox" /></row>
         </checkbox-col>
+        <col key="code" title="TRACKING CODE" sort="true" width="250px" apply-filter="true" id="trackingCode">
+            <filter filter-type="multiselect">
+                <option value="fsa1">Something</option>
+                <option value="fsa">Something1</option>
+                <option value="dsa">Something2</option>
+                <option value="Something2">Something3</option>
+                <option value="Something4">Something4</option>
+            </filter>
+            <content>
+                <a jqr-go="" class="link olp-summary-popover info-icon"
+                   href="{{$xs-url('SHIPMENT_DETAILS', data.code)}}">{{data.code}}</a>
+                <a target="_blank" href="/shipments/{{data.code}}/print">
+                    <i class="icon icon_print print-shipment"> </i>
+                </a>
+                <copy> </copy>
+                <div class="clear"></div>
+            </content>
+        </col>
+        <col title="RETURN AWB NO." hidden="{{glob.shipmentsStatus !== 'returned'}}" id="returnAWB" apply-filter="true">
+            <filter filter-type="checkbox">
+                <option value="fsa1">Something</option>
+                <option value="dsa">Something2</option>
+                <option value="Something2">Something3</option>
+                <option value="Something4">Something4</option>
+            </filter>
+            <content>
+                <!-- if (data.returnShipmentCode) { -->
+                <a jqr-go="" class="pointer"
+                   href="{{$xs-url('SHIPMENT_DETAILS', data.returnShipmentCode)}}">{{data.returnShipmentCode}}</a>
+                <!-- } -->
+            </content>
+        </col>
+        <col title="CURRENT LANE" apply-filter="true" id="currentLane">
+            <filter filter-type="simplesearch"></filter>
+            <content>{{data.currentLane ? data.currentLane.displayName: ""}}</content>
+        </col>
         <col sort="true" title="BAG ID" presort="true" presort-direction="asc" width="33%">
             <a jqr-go="" class='link' href='/olp/operations/bag-details?bagCode={{data.code}}'>{{data.code}}</a>
             <copy/>

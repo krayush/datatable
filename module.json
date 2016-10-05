@@ -2,10 +2,10 @@
 	"name": "spamjs/datatable",
 	"spamjs/datatable": {
 		"js": ["spamjs.datatable.js"],
-		"on": ["spamjs/view", "jsutils/server", "webmodules/jquery", "jsutils/file", "jsutils/tmpl"]
+		"on": ["spamjs/view", "jsutils/server", "webmodules/jquery", "jsutils/file", "jsutils/tmpl", "webmodules/bootstrap/js"]
 	},
 	"spamjs/datatable/css": {
 		"css" : ["spamjs-datatable.css"],
-		"on": []
+		"on": ["webmodules/bootstrap/css"]
 	}
 }
