@@ -45,6 +45,7 @@ define({
                 }
             });
             switch(filterType) {
+                case "simpleselect":
                 case "multiselect":
                     var select = parent.find("select");
                     if(select.val()) {
@@ -94,6 +95,7 @@ define({
             });
             if(currentFilteredValue) {
                 switch(filterType) {
+                    case "simpleselect":
                     case "multiselect":
                         parent.find("select").val(currentFilteredValue);
                         break;
@@ -143,6 +145,13 @@ define({
                             switch(filterConfig.type) {
                                 case "multiselect":
                                     element = jq("<select multiple='multiple'></select");
+                                    _.each(filterConfig.data, function(data) {
+                                        element.append("<option value='" + data.value + "'>" + data.display + "</option>");
+                                    });
+                                    break;
+                                case "simpleselect":
+                                    element = jq("<select></select");
+                                    element.append("<option value=''>Select a option</option>");
                                     _.each(filterConfig.data, function(data) {
                                         element.append("<option value='" + data.value + "'>" + data.display + "</option>");
                                     });
