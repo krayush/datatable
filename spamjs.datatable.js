@@ -194,6 +194,7 @@ define({
                 columns: [],
                 apiMethod: "get",
                 columnDefs: [],
+                extraFilters: [],
                 global: {},
                 scrollY: "200px",
                 dom: "Rfrtlip",
@@ -258,6 +259,7 @@ define({
                 self.appliedFilters = self.tableConfig.defaultFilters || [];
                 self.configureAjax();
                 self.generateColumnsConfig();
+                self.mergeExtraFilters();
                 self.generateActionsConfig();
                 self.gridElement = self.$$.find("#gridContainer");
                 return jq.when(self.getGridData()).done(function() {
@@ -519,11 +521,13 @@ define({
                 }
                 var content = jq(columns[i]).find("content").html();
                 self.tableConfig.columns.push({
+                    id: columns[i].getAttribute("id"),
                     type: "html",
                     key: columns[i].getAttribute("key"),
                     // as getAttribute returns a string and not a boolean
                     visible: compiledElement.hasAttribute("hidden") ? compiledElement.getAttribute("hidden") === "false" : true,
                     title: customDiv[0].outerHTML,
+                    customDiv: customDiv,
                     className: columns[i].getAttribute("class") || "dt-head-left",
                     orderable: columns[i].getAttribute("sort") === "true",
                     width: columns[i].getAttribute("width") || self.tableConfig.defaultColumnWidth,
@@ -544,7 +548,25 @@ define({
                     ]
                 }
             }
-            console.error(self.filterConfig);
+        },
+        mergeExtraFilters: function() {
+            var self = this;
+            if(self.tableConfig.serverSide) {
+                self.tableConfig.extraFilters.map(function(filter) {
+                    self.filterConfig[filter.name] = {
+                        title: filter.title,
+                        type: filter.type,
+                        data: filter.value
+                    };
+                    self.tableConfig.columns.map(function(column) {
+                        if(column.id === filter.name) {
+                            column.customDiv.append('<div class="filter-container"><i class="fa fa-filter filter-icon" aria-hidden="true">&nbsp;</i></div>');
+                            column.customDiv.find(".filter-container").attr("filter-id", filter.name);
+                            column.title = column.customDiv[0].outerHTML;
+                        }
+                    });
+                });
+            }
         },
         configurePagination: function(data, callback) {
             var self = this;
