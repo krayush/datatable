@@ -148,3 +148,20 @@ datatable.instance({
 });
 this.add(instance);
 ```
+
+## Updating Request for DataTable
+```
+datatable.instance({
+    id: "domID",
+    configSrc: self.path("somepath.xml"),
+    defaultFilters: [{
+        name: "filterid",
+        value: "testvalue"
+    }],
+    correctPaginationData: function(paginationOptions) {
+        paginationOptions.test = "test";
+        return paginationOptions;
+    },
+});
+this.add(instance);
+``` 
