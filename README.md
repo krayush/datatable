@@ -3,11 +3,11 @@ Simple to integrate XML based jquery-datatable with support of server-side pagin
 
 ## General Installation
   
-1. Install through bower
+  1. Install through bower
 ```
 bower install spamjs-datatable
 ```
-2. Add dependencies in module.json  
+  2. Add dependencies in module.json  
 ```
 {
   	"name": "x/y",
@@ -19,7 +19,7 @@ bower install spamjs-datatable
 }
 
 ```
-3. Usage
+  3. Usage
 
 ```
 this.add(datatable.instance({
