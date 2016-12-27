@@ -79,8 +79,8 @@ Request: /test-api?pageNumber=1&pageSize=25&orderBy=updated&sortAscending=false
 }
 ```
 
-## Adding filters
-- Basic Filters
+## Adding actions
+- Basic actions
 ```
 <actions id="actions">
     <action>Test Action 1</action>
@@ -88,7 +88,7 @@ Request: /test-api?pageNumber=1&pageSize=25&orderBy=updated&sortAscending=false
 </actions>
 ```
 
-- Condition based filters
+- Condition based actions
 ```
 <actions id="actions">
     <!-- if(glob.shipmentsStatus === "qcpending") { -->
@@ -99,3 +99,52 @@ Request: /test-api?pageNumber=1&pageSize=25&orderBy=updated&sortAscending=false
 </actions>
 ```
 
+## Adding filters
+- Basic filters
+```
+<col title="Column Header" id="testIdRequiredForCol" apply-filter="true">
+    <filter filter-type="checkbox">
+        <option value="fsa1">Something</option>
+        <option value="dsa">Something2</option>
+        <option value="Something2">Something3</option>
+        <option value="Something4">Something4</option>
+    </filter>
+    <content>
+        TEST CONTENT
+    </content>
+</col>
+```
+
+- Extra filters (via JavaScript)
+```
+datatable.instance({
+    id: "domID",
+    configSrc: self.path("somepath.xml"),
+    extraFilters: [{
+        name: "filterName",
+        value: [{
+            display: "x",
+            value: "x"
+        }, {
+            display: "y",
+            value: "y"
+        }],
+        title: "Filter Title",
+        type: "multiselect"
+    }]
+});
+this.add(instance);
+```
+
+- Default filters (via JavaScript)
+```
+datatable.instance({
+    id: "domID",
+    configSrc: self.path("somepath.xml"),
+    defaultFilters: [{
+        name: "filterid",
+        value: "testvalue"
+    }]
+});
+this.add(instance);
+```
