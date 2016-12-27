@@ -100,7 +100,11 @@ Request: /test-api?pageNumber=1&pageSize=25&orderBy=updated&sortAscending=false
 ```
 
 ## Adding filters
-- Basic filters
+- Basic filters: Types of filters available are 
+    - checkbox
+    - simpleselect
+    - multiselect 
+    - (default - no type required for simple search)
 ```
 <col title="Column Header" id="testIdRequiredForCol" apply-filter="true">
     <filter filter-type="checkbox">
@@ -150,6 +154,7 @@ this.add(instance);
 ```
 
 ## Updating Request for DataTable
+- Use correctPaginationData to change the request object i.e. add/remove new attributes. 
 ```
 datatable.instance({
     id: "domID",
@@ -167,6 +172,8 @@ this.add(instance);
 ``` 
 
 ## Formatting data before rendering
+- Basic Implementation: Use dataFormatter to change structure of data received in response. 
+Add additional attributes or remove attributes as per the requirements and implementation.
 ```
 datatable.instance({
     id: "domID",
