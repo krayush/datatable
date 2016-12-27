@@ -166,7 +166,7 @@ datatable.instance({
 this.add(instance);
 ``` 
 
-## Formatting data structure before rendering
+## Formatting data before rendering
 ```
 datatable.instance({
     id: "domID",
