@@ -2,12 +2,13 @@
 Simple to integrate XML based jquery-datatable with support of server-side pagination, custom filters and underscore based templating
 
 ## General Installation
-  
-  1. Install through bower
+ 
+- Install through bower
 ```
 bower install spamjs-datatable
 ```
-  2. Add dependencies in module.json  
+
+- Add dependencies in module.json  
 ```
 {
   	"name": "x/y",
@@ -17,9 +18,9 @@ bower install spamjs-datatable
   		"on": ["spamjs/datatable"]
   	}
 }
-
 ```
-  3. Usage
+
+- Usage
 
 ```
 this.add(datatable.instance({
@@ -36,7 +37,7 @@ this.add(datatable.instance({
 }));
 ```
 
-4. XML file
+- XML file
 
 ```
 <data-table>
