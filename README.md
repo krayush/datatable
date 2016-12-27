@@ -1,13 +1,18 @@
 # spamjs-datatable
-Simple to integrate XML based jquery-datatable with support of server-side pagination, custom filters and underscore based templating
+Simple to integrate XML based jquery-datatable with support of 
+- server-side pagination 
+- custom filters 
+- underscore based templating
+- user row selection
 
 ## General Installation
   
-1. Install through bower
+- Install through bower
 ```
 bower install spamjs-datatable
 ```
-2. Add dependencies in module.json  
+
+- Add dependencies in module.json  
 ```
 {
   	"name": "x/y",
@@ -17,10 +22,9 @@ bower install spamjs-datatable
   		"on": ["spamjs/datatable"]
   	}
 }
-
 ```
-3. Usage
 
+- Usage
 ```
 this.add(datatable.instance({
     id: "domId",
@@ -36,30 +40,18 @@ this.add(datatable.instance({
 }));
 ```
 
-4. XML file
-
+- XML file
 ```
 <data-table>
-    <ajax id="ajax"
-          data-url="api to fetch data"
+    <ajax id="ajax" data-url="api to fetch data"
           data-server-side="true">
     </ajax>
-    <config id="config"
-            data-sort="true"
-            data-paginate="true"
-            data-row-reorder="false"
+    <config id="config" data-sort="true"
+            data-paginate="true" data-row-reorder="false"
             data-show-checkbox="true">
     </config>
-    <pagination id="pagination" 
-            data-page-length="25" 
+    <pagination id="pagination" data-page-length="25" 
             data-paging-type="simple"></pagination>
-    <actions id="actions">
-        <!-- if(glob.shipmentsStatus === "qcpending") { -->
-        <action>Test Action</action>
-        <!-- } -->
-        <action>Test Action 1</action>
-        <action>Test Action 2</action>
-    </actions>
     <columns>
         <col title="Column Heading">
             <content>Something</content>
@@ -71,15 +63,13 @@ this.add(datatable.instance({
 </data-table>
 ```
 
-5. Request format:
-
+- Request format:
 ```
 Action: GET
 Request: /test-api?pageNumber=1&pageSize=25&orderBy=updated&sortAscending=false
 ```
 
-6. Response format:
-
+- Response format:
 ```
 {
     content: [],
@@ -88,3 +78,24 @@ Request: /test-api?pageNumber=1&pageSize=25&orderBy=updated&sortAscending=false
     totalElements: 75
 }
 ```
+
+## Adding filters
+- Basic Filters
+```
+<actions id="actions">
+    <action>Test Action 1</action>
+    <action>Test Action 2</action>
+</actions>
+```
+
+- Condition based filters
+```
+<actions id="actions">
+    <!-- if(glob.shipmentsStatus === "qcpending") { -->
+    <action>Test Action</action>
+    <!-- } -->
+    <action>Test Action 1</action>
+    <action>Test Action 2</action>
+</actions>
+```
+
