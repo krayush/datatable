@@ -161,7 +161,25 @@ datatable.instance({
     correctPaginationData: function(paginationOptions) {
         paginationOptions.test = "test";
         return paginationOptions;
-    },
+    }
 });
 this.add(instance);
 ``` 
+
+## Formatting data structure before rendering
+```
+datatable.instance({
+    id: "domID",
+    configSrc: self.path("somepath.xml"),
+    defaultFilters: [{
+        name: "filterid",
+        value: "testvalue"
+    }],
+    dataFormatter: function(data) {
+        // Change the structure here
+        return paginationOptions;
+    }
+});
+this.add(instance);
+```
+
