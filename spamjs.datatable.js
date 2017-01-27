@@ -262,28 +262,32 @@ define({
                 self.mergeExtraFilters();
                 self.generateActionsConfig();
                 self.gridElement = self.$$.find("#gridContainer");
-                return jq.when(self.getGridData()).done(function() {
-                    self.gridInstance = self.gridElement.DataTable(self.tableConfig);
-                    self.bindExternalSearch();
-                    self.bindRowReorder();
-                    // configuring rendering of grid on resizing
-                    jq(window).resize(self.getResizeTasks());
-                    // configuring closing of filters section on click anywhere
-                    jq("body").click(function() {
-                        self.closeFilterSection();
-                        self.currentOpenFilter = null;
-                    });
-                    if (self.tableConfig.showCheckbox) {
-                        self.$$.find(".dataTables_scroll").addClass("checkbox-enabled");
-                    }
-                    if (self.tableConfig.rowReorder) {
-                        self.$$.find(".dataTables_scroll").addClass("reorder-enabled");
-                    }
-                    self.configureGridActions();
-                }).always(function() {
+                return jq.when(self.getGridData()).done(function(resp) {
+                    self._renderTable_(resp);
+                }).always(function(resp) {
                     self.$$.find("spinner").remove();
                 });
             });
+        },
+        _renderTable_: function(resp){
+            var self =this;
+            self.gridInstance = self.gridElement.DataTable(self.tableConfig);
+            self.bindExternalSearch();
+            self.bindRowReorder();
+            // configuring rendering of grid on resizing
+            jq(window).resize(self.getResizeTasks());
+            // configuring closing of filters section on click anywhere
+            jq("body").click(function() {
+                self.closeFilterSection();
+                self.currentOpenFilter = null;
+            });
+            if (self.tableConfig.showCheckbox) {
+                self.$$.find(".dataTables_scroll").addClass("checkbox-enabled");
+            }
+            if (self.tableConfig.rowReorder) {
+                self.$$.find(".dataTables_scroll").addClass("reorder-enabled");
+            }
+            self.configureGridActions();
         },
         // Tasks to be performed when window resize happens
         getResizeTasks: function() {
