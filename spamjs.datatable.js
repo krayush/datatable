@@ -196,6 +196,7 @@ define({
                 columnDefs: [],
                 extraFilters: [],
                 global: {},
+                dynamicContent: false,
                 scrollY: "200px",
                 dom: "Rfrtlip",
                 // for show/hide "Available Actions" in the grid actions
@@ -264,6 +265,14 @@ define({
                 self.gridElement = self.$$.find("#gridContainer");
                 return jq.when(self.getGridData()).done(function(resp) {
                     self._renderTable_(resp);
+                    // Adding support for rendering of x-tags
+                    if(self.tableConfig.dynamicContent) {
+                        self.gridInstance.on('length.dt', function () {
+                            setTimeout(function() {
+                                self.gridInstance.page(1).draw(false).page(0).draw(false);
+                            }, 0);
+                        });
+                    }
                 }).always(function(resp) {
                     self.$$.find("spinner").remove();
                 });
