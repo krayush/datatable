@@ -190,3 +190,13 @@ datatable.instance({
 this.add(instance);
 ```
 
+## Limiting no. of max rows that can be selected
+<config id="config" 
+        data-sort="true" 
+        data-paginate="true" 
+        data-max-row-select-count="3"
+        data-show-actions="true"
+        data-row-reorder="false"
+        data-show-checkbox="true">
+</config>
+
