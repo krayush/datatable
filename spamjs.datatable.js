@@ -167,7 +167,7 @@ define({
                                         );
                                     });
                                     break;
-                                default: 
+                                default:
                                     element = jq("<input type='text'/>");
                                     break;
                             }
@@ -196,8 +196,10 @@ define({
                 columnDefs: [],
                 extraFilters: [],
                 global: {},
+                dynamicContent: false,
                 scrollY: "200px",
                 dom: "Rfrtlip",
+                maxRowSelectCount: 999,
                 // for show/hide "Available Actions" in the grid actions
                 showActionTitle: true,
                 info: false,
@@ -233,7 +235,7 @@ define({
                     self.trigger("grid-draw-completed");
                 },
                 correctPaginationData: function(paginateOptions) { return paginateOptions;},
-                initComplete: function() { 
+                initComplete: function() {
                     if(!self.resizeDatatable) {
                         self.resizeDatatable = self.getResize();
                     }
@@ -255,35 +257,47 @@ define({
                 self.generateTableConfig();
                 // This way we will override everything in JS code
                 self.tableConfig = jq.extend(self.tableConfig, config);
-                // Setting filters as 
+                // Setting filters as
                 self.appliedFilters = self.tableConfig.defaultFilters || [];
                 self.configureAjax();
                 self.generateColumnsConfig();
                 self.mergeExtraFilters();
                 self.generateActionsConfig();
                 self.gridElement = self.$$.find("#gridContainer");
-                return jq.when(self.getGridData()).done(function() {
-                    self.gridInstance = self.gridElement.DataTable(self.tableConfig);
-                    self.bindExternalSearch();
-                    self.bindRowReorder();
-                    // configuring rendering of grid on resizing
-                    jq(window).resize(self.getResizeTasks());
-                    // configuring closing of filters section on click anywhere
-                    jq("body").click(function() {
-                        self.closeFilterSection();
-                        self.currentOpenFilter = null;
-                    });
-                    if (self.tableConfig.showCheckbox) {
-                        self.$$.find(".dataTables_scroll").addClass("checkbox-enabled");
+                return jq.when(self.getGridData()).done(function(resp) {
+                    self._renderTable_(resp);
+                    // Adding support for rendering of x-tags
+                    if(self.tableConfig.dynamicContent) {
+                        self.gridInstance.on('length.dt', function () {
+                            setTimeout(function() {
+                                self.gridInstance.page(1).draw(false).page(0).draw(false);
+                            }, 0);
+                        });
                     }
-                    if (self.tableConfig.rowReorder) {
-                        self.$$.find(".dataTables_scroll").addClass("reorder-enabled");
-                    }
-                    self.configureGridActions();
-                }).always(function() {
+                }).always(function(resp) {
                     self.$$.find("spinner").remove();
                 });
             });
+        },
+        _renderTable_: function(resp){
+            var self =this;
+            self.gridInstance = self.gridElement.DataTable(self.tableConfig);
+            self.bindExternalSearch();
+            self.bindRowReorder();
+            // configuring rendering of grid on resizing
+            jq(window).resize(self.getResizeTasks());
+            // configuring closing of filters section on click anywhere
+            jq("body").click(function() {
+                self.closeFilterSection();
+                self.currentOpenFilter = null;
+            });
+            if (self.tableConfig.showCheckbox) {
+                self.$$.find(".dataTables_scroll").addClass("checkbox-enabled");
+            }
+            if (self.tableConfig.rowReorder) {
+                self.$$.find(".dataTables_scroll").addClass("reorder-enabled");
+            }
+            self.configureGridActions();
         },
         // Tasks to be performed when window resize happens
         getResizeTasks: function() {
@@ -460,6 +474,7 @@ define({
         generateColumnsConfig: function() {
             var self = this;
             var columns = self.jqfile.find("col");
+            var selectAllTitleContent = "";
             var checkboxColumn = self.jqfile.find("checkbox-col");
             if(self.tableConfig.rowReorder) {
                 self.tableConfig.columns.push({
@@ -481,19 +496,24 @@ define({
                         html: jq(checkboxColumn).find("row").html()
                     };
                 }
+                // No select all functionality for maxRowSelectCount !== 999
+                if(this.tableConfig.maxRowSelectCount === 999) {
+                    selectAllTitleContent = '<input type="checkbox" class="select-all" />';
+                }
                 self.tableConfig.columns.push(jq.extend({
                     type: "html",
-                    title: '<input type="checkbox" class="select-all" />',
+                    title: selectAllTitleContent,
                     className: "dt-head-center checkbox-col",
                     orderable: false,
                     html: '<input type="checkbox" class="row-checkbox"/>'
                 }, self.checkboxConfig));
+
                 // +self.tableConfig.rowReorder will give 1 in case of row-reordering enabled
                 self.tableConfig.columns[+self.tableConfig.rowReorder].render = function(data, type, full, meta) {
                     return tmplUtil.compile(self.tableConfig.columns[+self.tableConfig.rowReorder].html, {
                         variable : ""
                     })({
-                        data: full, 
+                        data: full,
                         glob: self.tableConfig.global
                     });
                 };
@@ -585,13 +605,13 @@ define({
             self.$$.append("<spinner mid-spinner></spinner>");
             // config here is an object which will contain url and paginateOptions
             var config = self.tableConfig.integrateFilters(
-                self.tableConfig.url, 
-                paginateOptions, 
+                self.tableConfig.url,
+                paginateOptions,
                 self.appliedFilters
             );
             self.getServer()[self.tableConfig.apiMethod](
-                config.url, 
-                config.paginateOptions, 
+                config.url,
+                config.paginateOptions,
                 self.tableConfig.pathParams
             ).done(function(resp) {
                 // formatting data before passing it to grid - only use if required
@@ -615,7 +635,7 @@ define({
         },
         datatableRowClick: function(e, element) {
             var self = this;
-            self.$$.find(".tr-selected").removeClass("tr-selected");    
+            self.$$.find(".tr-selected").removeClass("tr-selected");
             if (!jq(element).hasClass("tr-selected")) {
                 jq(element).addClass("tr-selected");
                 self.trigger("grid-row-clicked", self.gridInstance.row(element).data());
@@ -625,7 +645,7 @@ define({
         rowSelectionChanged: function(e, element) {
             this.calculateSelectionChanged();
             this.setSelectRowsData(element);
-            this.trigger("row-selection-changed", this.rowsSelected);
+            this.triggerRowSelectionChanged();
         },
         calculateSelectionChanged: function() {
             var self = this;
@@ -634,11 +654,26 @@ define({
             var chkbox_checked = self.$$.find('.row-checkbox:checked', table);
             var chkbox_select_all = self.$$.find('input[type="checkbox"].select-all', table).get(0);
             // true if any row is selected
-            chkbox_select_all.checked = !!(chkbox_checked.length);
-            chkbox_select_all.indeterminate = (
-                chkbox_checked.length && chkbox_checked.length < chkbox_all.length && 'indeterminate' in chkbox_select_all
-            );
+            if(chkbox_select_all) {
+                chkbox_select_all.checked = !!(chkbox_checked.length);
+                chkbox_select_all.indeterminate = (
+                    chkbox_checked.length && chkbox_checked.length < chkbox_all.length && 'indeterminate' in chkbox_select_all
+                );
+            }
             self.tableConfig.actionsFormatter.call(self, chkbox_checked);
+        },
+        triggerRowSelectionChanged: function() {
+            var availableRows;
+            this.trigger("row-selection-changed", this.rowsSelected);
+            if(this.rowsSelected.length === this.tableConfig.maxRowSelectCount) {
+                availableRows = this.gridElement.find(".row-checkbox:not(:disabled):not(:checked)");
+                availableRows.prop("disabled", true);
+                availableRows.attr("custom-disabled", "true");
+            } else {
+                availableRows = this.gridElement.find(".row-checkbox[custom-disabled]");
+                availableRows.removeAttr("custom-disabled");
+                availableRows.prop("disabled", false);
+            }
         },
         selectAllRows: function(e, element) {
             var self = this;
@@ -649,7 +684,7 @@ define({
             availableRows.map(function(index, element) {
                 self.setSelectRowsData(element);
             });
-            self.trigger("row-selection-changed", self.rowsSelected);
+            self.triggerRowSelectionChanged();
             self.calculateSelectionChanged();
             e.stopPropagation();
         },
