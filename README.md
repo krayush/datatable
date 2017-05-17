@@ -191,6 +191,7 @@ this.add(instance);
 ```
 
 ## Limiting no. of max rows that can be selected
+```
 <config id="config" 
         data-sort="true" 
         data-paginate="true" 
@@ -199,4 +200,4 @@ this.add(instance);
         data-row-reorder="false"
         data-show-checkbox="true">
 </config>
-
+```
